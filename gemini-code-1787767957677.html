@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">ÖSYM Sonuç ve Yerleştirme Sistemi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #eff6ff;
+            --card-bg: #ffffff;
+            --text-main: #1e3a8a;
+            --text-muted: #3b82f6;
+            --border: #93c5fd;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.1);
+            padding: 30px 20px;
+            text-align: center;
+            box-sizing: border-box;
+            width: 100%;
+            border: 1px solid var(--border);
+        }
+
+        .logo-box img {
+            max-height: 85px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .logo-placeholder {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #1e40af;
+            margin-bottom: 15px;
+        }
+
+        .exam-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fff;
+            color: var(--text-main);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .btn:hover { background-color: var(--primary-hover); }
+
+        .btn-danger { background-color: var(--danger); width: auto; padding: 8px 16px; margin: 0; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-warning { background-color: var(--warning); width: auto; padding: 6px 12px; margin: 0; color: white; }
+        .btn-warning:hover { background-color: #d97706; }
+
+        .error-text { color: var(--danger); font-size: 14px; margin-top: 15px; display: none; }
+
+        /* ÖSYM RESMİ MODERN BELGE TASARIMI (MOBİL UYUMLU) */
+        .osym-document {
+            display: none;
+            background: #ffffff;
+            width: 100%;
+            max-width: 750px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.1);
+            border-radius: 12px;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .osym-header, .osym-content-area, .osym-footer, .doc-action-bar {
+            position: relative;
+            z-index: 1;
+        }
+
+        .osym-header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .osym-header img { 
+            max-height: 70px; 
+            max-width: 120px;
+            object-fit: contain; 
+        }
+
+        .osym-header h2 { 
+            font-size: 14px; 
+            margin: 0; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            flex-grow: 1; 
+            text-align: center; 
+            color: var(--text-main);
+        }
+
+        /* İçerik Düzeni: Fotoğraf ve Bilgi Tablosu */
+        .osym-content-area {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .student-photo-box {
+            width: 120px;
+            height: 150px;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            background-color: #eff6ff;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .student-photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-placeholder-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 10px;
+        }
+
+        .osym-list-table-container {
+            flex-grow: 1;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .osym-list-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+        }
+
+        .osym-list-table td {
+            border: 1px solid var(--border);
+            padding: 7px 10px;
+        }
+
+        .osym-list-table td:nth-child(odd) {
+            width: 38%;
+            font-weight: 600;
+            background-color: #eff6ff;
+            color: var(--text-main);
+        }
+
+        .osym-list-table td:nth-child(even) {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .osym-footer {
+            font-size: 11.5px;
+            text-align: center;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            white-space: pre-line;
+            color: var(--text-muted);
+        }
+
+        /* Admin Paneli Stilleri */
+        .admin-container {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+            box-sizing: border-box;
+            max-height: 92vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .admin-header h2 { font-size: 18px; margin: 0; color: var(--text-main); }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .settings-grid h3, .admin-container > h3 {
+            color: var(--text-main);
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table.admin-list-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            min-width: 600px;
+        }
+        table.admin-list-table th, table.admin-list-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            font-size: 13px;
+        }
+        table.admin-list-table th { background-color: #eff6ff; color: var(--text-main); }
+
+        /* Mobil Uyumluluk için Medya Sorguları */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .card { padding: 20px 15px; }
+            .settings-grid { grid-template-columns: 1fr; }
+            .osym-content-area {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .student-photo-box {
+                margin: 0 auto 10px auto;
+            }
+            .osym-header h2 {
+                font-size: 12px;
+            }
+            .osym-header img {
+                max-height: 50px;
+            }
+            .osym-list-table {
+                font-size: 11px;
+            }
+            .admin-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- GİRİŞ EKRANI -->
+    <div class="container" id="loginScreen">
+        <div class="card">
+            <div class="logo-box" id="displayLogoContainer">
+                <div class="logo-placeholder" id="displayLogoText">ÖSYM</div>
+            </div>
+            <div class="exam-title" id="displayExamName">Sınav Sonuç ve Yerleştirme Sistemi</div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="tcNo">T.C. Kimlik Numarası</label>
+                    <input type="text" id="tcNo" class="form-control" required placeholder="TC Kimlik Numaranız">
+                </div>
+                <div class="form-group">
+                    <label for="dogumTarihi">Doğum Tarihi</label>
+                    <input type="text" id="dogumTarihi" class="form-control" required placeholder="GG.AA.YYYY">
+                </div>
+                <button type="submit" class="btn">Sorgula / Giriş Yap</button>
+            </form>
+            <div id="errorText" class="error-text">Hatalı T.C. Kimlik No veya Doğum Tarihi!</div>
+        </div>
+    </div>
+
+    <!-- ÖĞRENCİ SONUÇ EKRANI -->
+    <div class="osym-document" id="resultScreen">
+        <div class="osym-header">
+            <div id="osymHeaderLogo" style="width: 90px; text-align: left;"><b>ÖSYM</b></div>
+            <h2 id="docExamTitle">2026 YKS YERLEŞTİRME SONUÇ BELGESİ</h2>
+            <div style="width: 90px;"></div>
+        </div>
+
+        <div class="osym-content-area">
+            <!-- Öğrenci Vesikalık Fotoğrafı -->
+            <div class="student-photo-box" id="resPhotoContainer">
+                <div class="photo-placeholder-text">Fotoğraf Yok</div>
+            </div>
+
+            <!-- Bilgi Tablosu -->
+            <div class="osym-list-table-container">
+                <table class="osym-list-table">
+                    <tr>
+                        <td>Adı Soyadı</td>
+                        <td id="resName">AD SOYAD</td>
+                    </tr>
+                    <tr>
+                        <td>T.C. Kimlik Numarası</td>
+                        <td id="resTc">00000000000</td>
+                    </tr>
+                    <tr>
+                        <td>Mezun Olduğu Lise</td>
+                        <td id="resLise">-</td>
+                    </tr>
+                    <tr>
+                        <td>Bitirdiği Ön Lisans Programı</td>
+                        <td id="resOnlisans">-</td>
+                    </tr>
+                    <tr>
+                        <td>Diploma Puanı</td>
+                        <td id="resDiploma">0,00</td>
+                    </tr>
+                    <tr>
+                        <td>Başarı Sırası</td>
+                        <td id="resSira">0</td>
+                    </tr>
+                    <tr>
+                        <td>Bölüm Kontenjanı</td>
+                        <td id="resKontenjan">0</td>
+                    </tr>
+                    <tr>
+                        <td>Sonuç / Test İsmi</td>
+                        <td id="resTestIsmi">YKS Yerleştirme Sonucu</td>
+                    </tr>
+                    <tr>
+                        <td>Sonuç Tarihi</td>
+                        <td id="resTarih">00.00.2026</td>
+                    </tr>
+                    <tr>
+                        <td>Sınav Puanı</td>
+                        <td id="resSinavPuani">0,00000</td>
+                    </tr>
+                    <tr>
+                        <td>Yerleştirmeye Esas Puan</td>
+                        <td id="resYerlesmePuani">0,00000</td>
+                    </tr>
+                    <tr>
+                        <td>Başvuru Yapılan Bölüm</td>
+                        <td id="resBolum">Örnek Fakülte / Bölüm</td>
+                    </tr>
+                    <tr>
+                        <td>Yerleştirme Sonucu</td>
+                        <td id="resYerlesmeSonucu" style="font-weight: 700; color: #ef4444;">Yerleştirilemedi</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Düzenlenebilir Alt Not Alanı -->
+        <div class="osym-footer" id="resFooterNote">
+            Bu belge, ilgili adayların yerleştirme sonuçlarını bildirmek amacıyla hazırlanmıştır.
+        </div>
+
+        <div class="doc-action-bar" style="margin-top: 20px; text-align: center;">
+            <button class="btn" style="width: auto; padding: 10px 30px;" onclick="logout()">Güvenli Çıkış Yap</button>
+        </div>
+    </div>
+
+    <!-- ADMIN PANELİ -->
+    <div class="admin-container" id="adminScreen">
+        <div class="admin-header">
+            <h2>Gelişmiş ÖSYM Admin Yönetim Paneli</h2>
+            <button class="btn btn-danger" onclick="logout()">Güvenli Çıkış</button>
+        </div>
+
+        <div class="settings-grid">
+            <div>
+                <h3>Site ve Logo Ayarları</h3>
+                <div class="form-group">
+                    <label>Genel Sınav / Sistem Başlığı</label>
+                    <input type="text" id="settingExamName" class="form-control" oninput="updateSettings()">
+                </div>
+                <div class="form-group">
+                    <label>Logo URL (Büyük Boyut Destekli)</label>
+                    <input type="text" id="settingLogoUrl" class="form-control" placeholder="https://ornek.com/logo.png" oninput="updateSettings()">
+                </div>
+                <div class="form-group">
+                    <label>Sonuç Belgesi Alt Notu</label>
+                    <textarea id="settingFooterNote" class="form-control" rows="3" oninput="updateSettings()"></textarea>
+                </div>
+            </div>
+            <div>
+                <h3 id="formActionTitle">Aday Ekle / Düzenle</h3>
+                <input type="hidden" id="editIndex" value="-1">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <input type="text" id="newTc" class="form-control" placeholder="T.C. Kimlik No">
+                    <input type="text" id="newDob" class="form-control" placeholder="Doğum Tarihi (GG.AA.YYYY)">
+                </div>
+                <div style="margin-top: 8px;">
+                    <input type="text" id="newName" class="form-control" placeholder="Adı Soyadı">
+                </div>
+                <div style="margin-top: 8px;">
+                    <input type="text" id="newPhoto" class="form-control" placeholder="Fotoğraf URL (Örn: https://ornek.com/foto.jpg)">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="newLise" class="form-control" placeholder="Mezun Olduğu Lise">
+                    <input type="text" id="newOnlisans" class="form-control" placeholder="Bitirdiği Ön Lisans Programı">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="newDiploma" class="form-control" placeholder="Diploma Puanı">
+                    <input type="text" id="newSira" class="form-control" placeholder="Başarı Sırası">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="newKontenjan" class="form-control" placeholder="Bölüm Kontenjanı">
+                    <input type="text" id="newTestIsmi" class="form-control" placeholder="Sonuç / Test İsmi">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="newTarih" class="form-control" placeholder="Sonuç Tarihi">
+                    <input type="text" id="newSinavPuani" class="form-control" placeholder="Sınav Puanı">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="newYerlesmePuani" class="form-control" placeholder="Yerleştirmeye Esas Puan">
+                    <input type="text" id="newBolum" class="form-control" placeholder="Başvuru Yapılan Bölüm">
+                </div>
+                <div style="margin-top: 8px;">
+                    <input type="text" id="newYerlesmeSonucu" class="form-control" placeholder="Yerleştirme Sonucu">
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button class="btn" style="margin-top:0;" onclick="saveStudent()" id="saveBtn">Kaydet</button>
+                    <button class="btn btn-danger" style="display:none;" id="cancelEditBtn" onclick="cancelEdit()">İptal</button>
+                </div>
+            </div>
+        </div>
+
+        <h3>Kayıtlı Adaylar Veritabanı</h3>
+        <div class="table-responsive">
+            <table class="admin-list-table">
+                <thead>
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>TC No</th>
+                        <th>Doğum Tarihi</th>
+                        <th>Başvuru Yapılan Bölüm</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let siteSettings = JSON.parse(localStorage.getItem('osymSettingsV10')) || {
+            examName: "2026 YKS YERLEŞTİRME SONUÇ BELGESİ",
+            logoUrl: "",
+            footerNote: "Bu belge, ilgili adayların yerleştirme sonuçlarını bildirmek amacıyla hazırlanmıştır."
+        };
+
+        let students = JSON.parse(localStorage.getItem('osymStudentsV10')) || [
+            {
+                tc: "admin123",
+                dob: "01.01.2000",
+                name: "SİSTEM YÖNETİCİSİ",
+                photo: "",
+                lise: "-",
+                onlisans: "-",
+                diploma: "100,00",
+                sira: "1",
+                kontenjan: "90",
+                testIsmi: "YKS Yerleştirme Sonucu",
+                tarih: "19.08.2026",
+                sinavPuani: "500,00000",
+                yerlesmePuani: "550,00000",
+                bolum: "Yönetim Bilişim Sistemleri",
+                yerlesmeSonucu: "Sistem Yöneticisi Paneli",
+                isAdmin: true
+            },
+            {
+                tc: "48538092234",
+                dob: "01.01.1998",
+                name: "BERKAY YARDIMCI",
+                photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+                lise: "İzmir Atatürk Lisesi",
+                onlisans: "Yaşar Üniversitesi / Bilgisayar Programcılığı",
+                diploma: "85,40",
+                sira: "45.120",
+                kontenjan: "60",
+                testIsmi: "2026-YKS Sayısal Yerleştirme",
+                tarih: "19.08.2026",
+                sinavPuani: "385,42100",
+                yerlesmePuani: "410,82100",
+                bolum: "Yaşar Üniversitesi / Bilgisayar Mühendisliği (Örgün Öğretim)",
+                yerlesmeSonucu: "Yerleştirilemedi",
+                isAdmin: false
+            }
+        ];
+
+        function initApp() {
+            document.getElementById('settingExamName').value = siteSettings.examName;
+            document.getElementById('settingLogoUrl').value = siteSettings.logoUrl || '';
+            document.getElementById('settingFooterNote').value = siteSettings.footerNote || '';
+            
+            applySettingsToUI();
+            renderStudentTable();
+        }
+
+        function applySettingsToUI() {
+            document.getElementById('displayExamName').innerText = siteSettings.examName;
+            
+            const container = document.getElementById('displayLogoContainer');
+            const headerContainer = document.getElementById('osymHeaderLogo');
+            
+            if (siteSettings.logoUrl && siteSettings.logoUrl.trim() !== '') {
+                container.innerHTML = `<img src="${siteSettings.logoUrl}" alt="Logo">`;
+                headerContainer.innerHTML = `<img src="${siteSettings.logoUrl}" alt="Logo" style="max-height:55px;">`;
+            } else {
+                container.innerHTML = `<div class="logo-placeholder">ÖSYM</div>`;
+                headerContainer.innerHTML = `<b style="font-size:20px; letter-spacing:1px;">ÖSYM</b>`;
+            }
+        }
+
+        function updateSettings() {
+            siteSettings.examName = document.getElementById('settingExamName').value;
+            siteSettings.logoUrl = document.getElementById('settingLogoUrl').value;
+            siteSettings.footerNote = document.getElementById('settingFooterNote').value;
+            
+            localStorage.setItem('osymSettingsV10', JSON.stringify(siteSettings));
+            applySettingsToUI();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const tc = document.getElementById('tcNo').value.trim();
+            const dob = document.getElementById('dogumTarihi').value.trim();
+            const errorText = document.getElementById('errorText');
+
+            const user = students.find(s => s.tc === tc && s.dob === dob);
+
+            if (user) {
+                errorText.style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'none';
+
+                if (user.isAdmin) {
+                    document.getElementById('adminScreen').style.display = 'block';
+                } else {
+                    document.getElementById('resultScreen').style.display = 'block';
+                    document.getElementById('docExamTitle').innerText = siteSettings.examName;
+                    
+                    const photoBox = document.getElementById('resPhotoContainer');
+                    if(user.photo && user.photo.trim() !== '') {
+                        photoBox.innerHTML = `<img src="${user.photo}" alt="Öğrenci Fotoğrafı">`;
+                    } else {
+                        photoBox.innerHTML = `<div class="photo-placeholder-text">Fotoğraf Yok</div>`;
+                    }
+
+                    document.getElementById('resName').innerText = user.name;
+                    document.getElementById('resTc').innerText = user.tc;
+                    document.getElementById('resLise').innerText = user.lise || '-';
+                    document.getElementById('resOnlisans').innerText = user.onlisans || '-';
+                    document.getElementById('resDiploma').innerText = user.diploma;
+                    document.getElementById('resSira').innerText = user.sira;
+                    document.getElementById('resKontenjan').innerText = user.kontenjan;
+                    document.getElementById('resTestIsmi').innerText = user.testIsmi;
+                    document.getElementById('resTarih').innerText = user.tarih;
+                    document.getElementById('resSinavPuani').innerText = user.sinavPuani;
+                    document.getElementById('resYerlesmePuani').innerText = user.yerlesmePuani;
+                    document.getElementById('resBolum').innerText = user.bolum;
+                    
+                    const yerlesmeSonucuEl = document.getElementById('resYerlesmeSonucu');
+                    yerlesmeSonucuEl.innerText = user.yerlesmeSonucu;
+                    
+                    // Yerleştirilemedi veya Yerleşemedi durumlarında metni kırmızı yap
+                    if (user.yerlesmeSonucu.toLowerCase().includes('yerleşemedi') || user.yerlesmeSonucu.toLowerCase().includes('yerleştirilemedi')) {
+                        yerlesmeSonucuEl.style.color = '#ef4444';
+                    } else {
+                        yerlesmeSonucuEl.style.color = '#2563eb';
+                    }
+
+                    document.getElementById('resFooterNote').innerText = siteSettings.footerNote;
+                }
+            } else {
+                errorText.style.display = 'block';
+            }
+        });
+
+        function saveStudent() {
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+            const tc = document.getElementById('newTc').value.trim();
+            const dob = document.getElementById('newDob').value.trim();
+            const name = document.getElementById('newName').value.trim();
+
+            if(!tc || !dob || !name) {
+                alert("Lütfen T.C., Doğum Tarihi ve Ad Soyad alanlarını doldurun!");
+                return;
+            }
+
+            const data = {
+                tc: tc, dob: dob, name: name,
+                photo: document.getElementById('newPhoto').value.trim(),
+                lise: document.getElementById('newLise').value.trim() || "-",
+                onlisans: document.getElementById('newOnlisans').value.trim() || "-",
+                diploma: document.getElementById('newDiploma').value || "0,00",
+                sira: document.getElementById('newSira').value || "0",
+                kontenjan: document.getElementById('newKontenjan').value || "0",
+                testIsmi: document.getElementById('newTestIsmi').value || "",
+                tarih: document.getElementById('newTarih').value || "",
+                sinavPuani: document.getElementById('newSinavPuani').value || "0",
+                yerlesmePuani: document.getElementById('newYerlesmePuani').value || "0",
+                bolum: document.getElementById('newBolum').value || "",
+                yerlesmeSonucu: document.getElementById('newYerlesmeSonucu').value || "",
+                isAdmin: false
+            };
+
+            if (editIndex === -1) {
+                students.push(data);
+                alert("Aday başarıyla eklendi.");
+            } else {
+                students[editIndex] = data;
+                alert("Aday güncellendi.");
+                cancelEdit();
+            }
+
+            localStorage.setItem('osymStudentsV10', JSON.stringify(students));
+            renderStudentTable();
+            clearForm();
+        }
+
+        function editStudent(index) {
+            const s = students[index];
+            document.getElementById('newTc').value = s.tc;
+            document.getElementById('newDob').value = s.dob;
+            document.getElementById('newName').value = s.name;
+            document.getElementById('newPhoto').value = s.photo || '';
+            document.getElementById('newLise').value = s.lise || '';
+            document.getElementById('newOnlisans').value = s.onlisans || '';
+            document.getElementById('newDiploma').value = s.diploma;
+            document.getElementById('newSira').value = s.sira;
+            document.getElementById('newKontenjan').value = s.kontenjan;
+            document.getElementById('newTestIsmi').value = s.testIsmi;
+            document.getElementById('newTarih').value = s.tarih;
+            document.getElementById('newSinavPuani').value = s.sinavPuani;
+            document.getElementById('newYerlesmePuani').value = s.yerlesmePuani;
+            document.getElementById('newBolum').value = s.bolum;
+            document.getElementById('newYerlesmeSonucu').value = s.yerlesmeSonucu;
+
+            document.getElementById('editIndex').value = index;
+            document.getElementById('formActionTitle').innerText = "Adayı Düzenle";
+            document.getElementById('saveBtn').innerText = "Güncelle";
+            document.getElementById('cancelEditBtn').style.display = 'block';
+        }
+
+        function cancelEdit() {
+            clearForm();
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('formActionTitle').innerText = "Aday Ekle / Düzenle";
+            document.getElementById('saveBtn').innerText = "Kaydet";
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        }
+
+        function clearForm() {
+            document.getElementById('newTc').value = '';
+            document.getElementById('newDob').value = '';
+            document.getElementById('newName').value = '';
+            document.getElementById('newPhoto').value = '';
+            document.getElementById('newLise').value = '';
+            document.getElementById('newOnlisans').value = '';
+            document.getElementById('newDiploma').value = '';
+            document.getElementById('newSira').value = '';
+            document.getElementById('newKontenjan').value = '';
+            document.getElementById('newTestIsmi').value = '';
+            document.getElementById('newTarih').value = '';
+            document.getElementById('newSinavPuani').value = '';
+            document.getElementById('newYerlesmePuani').value = '';
+            document.getElementById('newBolum').value = '';
+            document.getElementById('newYerlesmeSonucu').value = '';
+        }
+
+        function deleteStudent(index) {
+            if(confirm("Bu adayı silmek istediğinize emin misiniz?")) {
+                students.splice(index, 1);
+                localStorage.setItem('osymStudentsV10', JSON.stringify(students));
+                renderStudentTable();
+            }
+        }
+
+        function renderStudentTable() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+            students.forEach((s, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${s.name} ${s.isAdmin ? '(Admin)' : ''}</td>
+                        <td>${s.tc}</td>
+                        <td>${s.dob}</td>
+                        <td>${s.bolum}</td>
+                        <td>
+                            <button class="btn btn-warning" style="padding:4px 8px; font-size:11px;" onclick="editStudent(${index})">Düzenle</button>
+                            ${!s.isAdmin ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:11px; margin-left:4px;" onclick="deleteStudent(${index})">Sil</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function logout() {
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('adminScreen').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'none';
+            document.getElementById('loginForm').reset();
+            cancelEdit();
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
